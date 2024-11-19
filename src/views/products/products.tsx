@@ -1,16 +1,17 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
-import { Product } from "@/types";
-import { ProductModal } from "@/views/products/productModal/productModal";
-import { BackToHome } from "@/components/backToHome/backToHome";
-import { ProductList } from "@/views/products/productList/productList";
-import { PaginationControls } from "@/views/products/paginationControls/paginationControls";
-import { usePagination } from "@/hooks/usePagination";
-import { PRODUCTS_DATA } from "@/data/productsData";
+import { BackToHome } from '@/components/backToHome/backToHome';
+import { PRODUCTS_DATA } from '@/data/productsData';
+import { usePagination } from '@/hooks/usePagination';
+import { Product } from '@/types';
+import { PaginationControls } from '@/views/products/paginationControls/paginationControls';
+import { ProductList } from '@/views/products/productList/productList';
+import { ProductModal } from '@/views/products/productModal/productModal';
+import { useRouter } from 'next/navigation';
+import React, { useCallback, useState } from 'react';
 
-export const Products: React.FC = () => {
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+export const Products: React.FC<{ product?: Product }> = ({ product }) => {
+  const [selectedProduct, setSelectedProduct] = useState(product);
   const {
     currentPage,
     totalPages,
@@ -18,12 +19,16 @@ export const Products: React.FC = () => {
     handlePageChange,
   } = usePagination({ items: PRODUCTS_DATA, itemsPerPage: 5 });
 
+  const router = useRouter();
+
   const handleOpenModal = useCallback((product: Product) => {
+    router.push(`?product_id=${product.id}`);
     setSelectedProduct(product);
   }, []);
 
   const handleCloseModal = useCallback(() => {
-    setSelectedProduct(null);
+    router.push('/products');
+    setSelectedProduct(undefined);
   }, []);
 
   return (
